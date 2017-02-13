@@ -1,7 +1,9 @@
 #Pads a *.img floppy image with 0s so that its size becomes a multiple of
 #512
 
-floppy = open("os.img", "ab")
+import sys
+
+floppy = open(sys.argv[1], "ab")
 floppy.seek(0, 2)
 floppy_size = floppy.tell()
 bytes_to_write = 512 - (floppy_size % 512)

@@ -12,27 +12,6 @@
 ;Execution starts here
 bootloader_entry:
 	jmp bootloader_stage_1
-;OEM Parameter block MUST go next, and begin at EXACTLY the
-;fourth byte (i.e. 0x7C02); the first 3 bytes are JMP addr16
-bpbOEM					db "MATTSOS", 0 ;Must be EXACTLY 8 bytes
-bpbBytesPerSector:		dw 512
-bpbSectorsPerCluster:	db 1
-bpbReservedSectors:		dw 1
-bpbNumberOfFATs:		db 2
-pbRootEntries: 	    	dw 224
-bpbTotalSectors: 	    dw 2880
-bpbMedia: 	            db 0xF0
-bpbSectorsPerFAT: 	    dw 9
-bpbSectorsPerTrack: 	dw 18
-bpbHeadsPerCylinder: 	dw 2
-bpbHiddenSectors: 	    dd 0
-bpbTotalSectorsBig:     dd 0
-bsDriveNumber: 	        db 0
-bsUnused: 	            db 0
-bsExtBootSignature: 	db 0x29
-bsSerialNumber:	        dd 0xA0A1A2A3
-bsVolumeLabel: 	        db "MOS FLOPPY "
-bsFileSystem: 	        db "FAT12   "
 
 ;INPUT: DS:SI must point to a null-terminated string
 print_string:

@@ -1,15 +1,18 @@
 #pragma once
 
-#include "LOW_LEVEL.h"
+#include <LOW_LEVEL.hpp>
 
 namespace KERN {
+namespace DRIVERS {
 
 class TextModeIO {
 public:
 
 	//Input MUST be a null-terminated string
 	static void print_string(const char *msg);
+	
 	static void clear_screen();
+	static void scroll_screen();
 
 private:
 	struct Glyph {
@@ -69,6 +72,7 @@ private:
 		++_pCurrentGlyph;
 	}
 
+
 	static Glyph *_pCurrentGlyph;
 	static Cursor _cursor;
 
@@ -86,4 +90,5 @@ private:
 	static const Glyph * const _pVideoMemoryEnd; 
 };
 
-} //namespace KERN)
+} //namespace DRIVERS
+} //namespace KERN

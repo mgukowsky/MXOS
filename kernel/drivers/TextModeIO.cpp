@@ -1,6 +1,7 @@
-#include "TextModeIO.h"
+#include <TextModeIO.hpp>
 
 using namespace KERN;
+using namespace KERN::DRIVERS;
 using KERN::LOW_LEVEL::outb;
 
 TextModeIO::Glyph * TextModeIO::_pCurrentGlyph;
@@ -48,6 +49,23 @@ void TextModeIO::clear_screen(){
 	_cursor.set(0, 0);
 }
 
+void TextModeIO::scroll_screen(){
+	Glyph *pGlyph = _pVideoMemory;
+
+	while(pGlyph < _pVideoMemoryEnd){
+		pGlyph->codePoint = (pGlyph + _NUM_COLUMNS)->codePoint;
+		pGlyph->attrs = 0x02;
+		++pGlyph;
+	}
+
+	//Clear out the bottom row
+	pGlyph -= _NUM_COLUMNS;
+	for(; pGlyph < _pVideoMemoryEnd; ++pGlyph){
+		pGlyph->codePoint = ' ';
+		pGlyph->attrs = 0x02;
+	}
+}
+
 void TextModeIO::Cursor::set(u8 newCol, u8 newRow){
 	col = newCol % _NUM_COLUMNS;
 	row = newRow % _NUM_ROWS;
@@ -66,14 +84,20 @@ void TextModeIO::Cursor::adjust(const u32 deltaChars){
 }
 
 void TextModeIO::Cursor::newline(){
-	set(0, row+1);
+	if(row == _NUM_ROWS-1){
+		TextModeIO::scroll_screen();
+		set(0, _NUM_ROWS-1);
+	}
+	else {
+		set(0, row+1);
+	}
 }
 
 
 void TextModeIO::Cursor::_move_cursor(){
 	//Adjust the VGA controller, then send the appropriate position byte
-	outb(0x3D4, 0x0F);
-	outb(0x3D5, static_cast<u8>(position & 0xFF));
-	outb(0x3D4, 0x0E);
-	outb(0x3D5, static_cast<u8>((position >> 8) & 0xFF));
+	outb(LOW_LEVEL::Port::VGA_REG, 0x0F);
+	outb(LOW_LEVEL::Port::VGA_DATA, static_cast<u8>(position & 0xFF));
+	outb(LOW_LEVEL::Port::VGA_REG, 0x0E);
+	outb(LOW_LEVEL::Port::VGA_DATA, static_cast<u8>((position >> 8) & 0xFF));
 }

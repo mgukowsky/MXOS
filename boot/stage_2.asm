@@ -1,4 +1,3 @@
-;[org 0x500] ;Stage 2 is loaded into 0x50:0, so we can start at 0
 [bits 16]
 
 ;The stage 1 bootloader will jump here as soon as it completes

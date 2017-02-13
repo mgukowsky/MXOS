@@ -1,5 +1,6 @@
-*.o
 *.bin
-*.img
-obj/
 *.exe
+*.img
+*.o
+dist/
+obj/
